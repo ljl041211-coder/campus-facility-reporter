@@ -501,3 +501,168 @@ textarea.text-input {
 .error-text {
   color: var(--color-open);
 }
+
+/* ---------- Map page ---------- */
+/* The map fills the space between the header and the bottom bar. */
+.app-main--map {
+  height: calc(
+    100dvh - var(--header-height) - env(safe-area-inset-top) - var(--nav-height) - env(safe-area-inset-bottom)
+  );
+  padding: 0;
+}
+
+.map-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  /* Keeps Leaflet's high z-index layers inside the map, below the header and bottom bar. */
+  isolation: isolate;
+}
+
+.map-notice {
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  font-size: 0.9rem;
+}
+
+.map-notice--error {
+  color: var(--color-open);
+  background-color: var(--color-open-bg);
+  font-weight: 600;
+}
+
+.map-notice--error::before {
+  content: '⚠ ';
+}
+
+.map-wrapper {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+
+/* Leaflet sets a small font on the map; use the app's font instead. */
+.map.leaflet-container {
+  font: inherit;
+}
+
+.map .leaflet-control-attribution {
+  font-size: 0.75rem;
+}
+
+/* Bigger zoom buttons, so they meet the 48px touch target size. */
+.map .leaflet-bar a {
+  width: 48px;
+  height: 48px;
+  line-height: 48px;
+  font-size: 1.4rem;
+}
+
+.map-locate-button {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 1000; /* above the map tiles and markers */
+  padding: 0 var(--space-4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.link-button {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ---------- Map popup ---------- */
+.map .leaflet-popup-content {
+  min-width: 200px;
+  margin: var(--space-3) var(--space-4);
+}
+
+.map-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+/* Leaflet gives popup paragraphs large margins; the gap above spaces them instead. */
+.leaflet-popup-content .map-popup p {
+  margin: 0;
+}
+
+.map-popup__title {
+  font-weight: 600;
+}
+
+.map-popup__text {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3; /* show at most three lines of the description */
+  line-clamp: 3;
+}
+
+.map-popup__button {
+  width: 100%;
+}
+
+/* ---------- Report markers (L.divIcon) ---------- */
+/* A square with three round corners, turned 45° so the sharp corner points
+   down at the reported spot. The emoji is turned back so it stays upright. */
+.report-marker__pin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 3px solid #ffffff;
+  border-radius: 50% 50% 50% 0;
+  background-color: var(--color-open);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  transform: rotate(-45deg);
+}
+
+.report-marker__emoji {
+  font-size: 18px;
+  line-height: 1;
+  transform: rotate(45deg);
+}
+
+/* Resolved: grey and faded, plus a ✓ badge (not colour alone). */
+.report-marker--resolved .report-marker__pin {
+  background-color: #8a938f;
+  opacity: 0.7;
+}
+
+.report-marker__check {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background-color: var(--color-resolved);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+}

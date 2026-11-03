@@ -15,20 +15,17 @@ const TITLES = {
   edit: 'Edit report',
 }
 
-// Where the header's Back button goes from each sub-screen.
-const BACK_TARGET = {
-  detail: 'list',
-  edit: 'detail',
-}
-
 /**
  * Navigation without a router: `activeTab` decides which screen is shown.
  * 'map', 'new' and 'list' are the three bottom tabs; 'detail' and 'edit' are
- * sub-screens of "My reports" and use `selectedReportId` to know which report to show.
+ * sub-screens that use `selectedReportId` to know which report to show.
+ * `returnTab` remembers where a report was opened from (the list or the map),
+ * so the Back button goes back there.
  */
 export default function App() {
   const [activeTab, setActiveTab] = useState('list')
   const [selectedReportId, setSelectedReportId] = useState(null)
+  const [returnTab, setReturnTab] = useState('list')
 
   // Start each new screen at the top, like a normal page change.
   useEffect(() => {
@@ -36,6 +33,7 @@ export default function App() {
   }, [activeTab])
 
   function openReport(id) {
+    setReturnTab(activeTab) // 'list' or 'map'
     setSelectedReportId(id)
     setActiveTab('detail')
   }
@@ -43,7 +41,7 @@ export default function App() {
   function renderPage() {
     switch (activeTab) {
       case 'map':
-        return <MapPage />
+        return <MapPage onOpenReport={openReport} onNavigate={setActiveTab} />
       case 'new':
         return <NewReportPage onSaved={() => setActiveTab('list')} />
       case 'detail':
@@ -52,7 +50,7 @@ export default function App() {
             reportId={selectedReportId}
             onEdit={() => setActiveTab('edit')}
             onDeleted={() => setActiveTab('list')}
-            onBack={() => setActiveTab('list')}
+            onBack={() => setActiveTab(returnTab)}
           />
         )
       case 'edit':
@@ -62,9 +60,13 @@ export default function App() {
     }
   }
 
-  const backTarget = BACK_TARGET[activeTab]
-  // Detail and edit belong to "My reports", so keep that tab highlighted.
-  const highlightedTab = backTarget ? 'list' : activeTab
+  // Where the header's Back button goes: details → list or map, edit → details.
+  let backTarget = null
+  if (activeTab === 'detail') backTarget = returnTab
+  if (activeTab === 'edit') backTarget = 'detail'
+
+  // On the detail and edit screens, keep the tab they were opened from highlighted.
+  const highlightedTab = backTarget ? returnTab : activeTab
 
   return (
     <div className="app">
@@ -77,7 +79,8 @@ export default function App() {
         <h1 className="app-header__title">{TITLES[activeTab]}</h1>
       </header>
 
-      <main className="app-main">{renderPage()}</main>
+      {/* The map fills the screen, so its page has no padding. */}
+      <main className={activeTab === 'map' ? 'app-main app-main--map' : 'app-main'}>{renderPage()}</main>
 
       <BottomNav activeTab={highlightedTab} onChange={setActiveTab} />
     </div>
