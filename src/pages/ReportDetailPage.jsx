@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import ConfirmDialog from '../components/ConfirmDialog.jsx'
+import LocationMap from '../components/LocationMap.jsx'
 import { getCategory, STATUSES } from '../constants/categories.js'
 import { usePhotoUrl } from '../hooks/usePhotoUrl.js'
 import { usePhoto, useReport } from '../hooks/useReport.js'
 import { deleteReport, setReportStatus } from '../services/reports.js'
 import { formatDate } from '../utils/formatDate.js'
-import { formatCoordinates, getReportLocation } from '../utils/location.js'
+import { describeLocationSource, formatCoordinates, getReportLocation } from '../utils/location.js'
 
 /**
  * READ (one report) + UPDATE status + DELETE.
@@ -83,18 +84,17 @@ export default function ReportDetailPage({ reportId, onEdit, onDeleted, onBack }
         <img src={photoUrl} alt={`Photo of the problem: ${category?.label ?? 'report'}`} className="photo-preview" />
       )}
 
+      {/* Read-only map: no onChange, so the pin cannot be moved here. */}
+      {location && <LocationMap location={location} category={report.category} />}
+
       <dl className="detail-list">
         <div>
           <dt>Description</dt>
           <dd>{report.description}</dd>
         </div>
         <div>
-          <dt>GPS location</dt>
-          <dd>
-            {location
-              ? `${formatCoordinates(location)} (accurate to about ${location.accuracy} m)`
-              : 'Not recorded'}
-          </dd>
+          <dt>Location</dt>
+          <dd>{location ? `${formatCoordinates(location)} (${describeLocationSource(location)})` : 'Not recorded'}</dd>
         </div>
         {report.locationNote && (
           <div>

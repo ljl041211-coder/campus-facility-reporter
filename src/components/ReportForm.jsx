@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import LocationField from './LocationField.jsx'
 import PhotoField from './PhotoField.jsx'
 import { CATEGORIES } from '../constants/categories.js'
@@ -55,13 +55,24 @@ function validate(values) {
 export default function ReportForm({ initialValues = EMPTY_VALUES, autoLocate = false, submitLabel, onSubmit, onCancel }) {
   const [values, setValues] = useState({ ...EMPTY_VALUES, ...initialValues })
   const geo = useGeolocation({ requestOnMount: autoLocate })
-  // A fresh GPS position wins; otherwise keep the saved one (when editing).
-  const location = geo.position ?? values.location
   const [errors, setErrors] = useState({})
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState('')
   const formRef = useRef(null)
   const id = useId() // unique ids so labels and error messages are linked correctly
+
+  // The location can come from GPS or from the map pin. Whenever a new GPS
+  // position arrives, it becomes the report's location; dragging the pin
+  // afterwards replaces it again (see LocationField).
+  useEffect(() => {
+    if (geo.position) {
+      setValues((previous) => ({ ...previous, location: { ...geo.position, source: 'gps' } }))
+    }
+  }, [geo.position])
+
+  function setLocation(location) {
+    setValues((previous) => ({ ...previous, location }))
+  }
 
   function handleChange(event) {
     const { name, value } = event.target
@@ -88,7 +99,7 @@ export default function ReportForm({ initialValues = EMPTY_VALUES, autoLocate = 
     setIsSaving(true)
     setSaveError('')
     try {
-      await onSubmit({ ...values, location })
+      await onSubmit(values)
     } catch (error) {
       setSaveError(`Could not save the report: ${error.message}`)
     } finally {
@@ -107,10 +118,12 @@ export default function ReportForm({ initialValues = EMPTY_VALUES, autoLocate = 
       />
 
       <LocationField
-        location={location}
+        location={values.location}
+        category={values.category}
         status={geo.status}
         errorMessage={geo.errorMessage}
         onRequest={geo.requestLocation}
+        onChange={setLocation}
         disabled={isSaving}
       />
 

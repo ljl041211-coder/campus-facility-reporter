@@ -13,9 +13,9 @@ const OPTIONS = {
 function describeError(error) {
   switch (error.code) {
     case 1: // PERMISSION_DENIED
-      return 'Location permission was denied. To allow it, open your browser or phone settings for this site. You can still describe the place in the location note.'
+      return 'Location permission was denied. To allow it, open your browser or phone settings for this site. You can still set the spot on the map or describe it in the location note.'
     case 2: // POSITION_UNAVAILABLE
-      return 'Your location could not be found. Try moving outdoors, away from tall buildings, then try again.'
+      return 'Your location could not be found. Check that location services are turned on for your browser, or move outdoors and try again. You can also set the spot on the map.'
     case 3: // TIMEOUT
       return 'Finding your location took too long. Please try again.'
     default:

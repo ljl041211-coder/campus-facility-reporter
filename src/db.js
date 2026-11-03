@@ -16,6 +16,7 @@ import Dexie from 'dexie'
  *   locationNote optional landmark text, e.g. "Left of the library entrance"
  *   status       'open' | 'resolved'
  *   latitude, longitude, accuracy   from the Geolocation API, or null if not recorded
+ *   locationSource  'gps' (Geolocation API) or 'map' (pin placed by hand; accuracy is then null)
  *   createdAt, updatedAt            timestamps in milliseconds
  *
  * photos table – at most one photo per report

@@ -7,11 +7,11 @@ import { db } from '../db.js'
  *
  * The form gives us one `values` object:
  *   { category, description, locationNote, location, photo }
- * where location is { latitude, longitude, accuracy } or null,
+ * where location is { latitude, longitude, accuracy, source } or null,
  * and photo is a JPEG Blob or null.
  */
 
-// Remove extra spaces before saving, and split the location into the three
+// Remove extra spaces before saving, and split the location into the
 // columns described in db.js (null when no location was recorded).
 function toReportFields({ category, description, locationNote, location }) {
   return {
@@ -21,6 +21,7 @@ function toReportFields({ category, description, locationNote, location }) {
     latitude: location?.latitude ?? null,
     longitude: location?.longitude ?? null,
     accuracy: location?.accuracy ?? null,
+    locationSource: location?.source ?? null, // 'gps' | 'map' | null
   }
 }
 
