@@ -1,0 +1,503 @@
+/* ---------- Layout ---------- */
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background-color: var(--color-bg);
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--header-height);
+  padding: env(safe-area-inset-top) var(--space-4) 0;
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.app-header__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.app-header__back {
+  min-height: var(--touch-target);
+  margin-left: calc(-1 * var(--space-2));
+  padding: 0 var(--space-2);
+  border: none;
+  border-radius: var(--radius);
+  background: none;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.app-main {
+  padding: var(--space-4);
+  /* leave room so the fixed bottom bar never covers the last item */
+  padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + var(--space-6));
+}
+
+/* ---------- Bottom navigation ---------- */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+  max-width: 640px;
+  min-height: var(--nav-height);
+  padding-bottom: env(safe-area-inset-bottom);
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.bottom-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: var(--touch-target);
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.bottom-nav__item--active {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.bottom-nav__icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.bottom-nav__label {
+  font-size: 0.8rem;
+}
+
+/* ---------- Buttons ---------- */
+.button {
+  min-height: var(--touch-target);
+  padding: 0 var(--space-6);
+  border-radius: var(--radius);
+  border: 2px solid var(--color-primary);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button--primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.button--primary:active {
+  background-color: var(--color-primary-dark);
+}
+
+.button--secondary {
+  background-color: var(--color-surface);
+  color: var(--color-primary);
+}
+
+.button--danger {
+  border-color: var(--color-open);
+  background-color: var(--color-open);
+  color: #ffffff;
+}
+
+.button--danger-outline {
+  border-color: var(--color-open);
+  background-color: var(--color-surface);
+  color: var(--color-open);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.button-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ---------- Report form ---------- */
+.report-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.form-hint {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.form-label {
+  padding: 0;
+  font-weight: 600;
+}
+
+.text-input {
+  width: 100%;
+  min-height: var(--touch-target);
+  padding: var(--space-3);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  /* 16px stops iPhone Safari zooming in when the field is focused */
+  font: inherit;
+  font-size: 1rem;
+}
+
+textarea.text-input {
+  resize: vertical;
+}
+
+.text-input[aria-invalid='true'] {
+  border-color: var(--color-open);
+}
+
+.field-count {
+  align-self: flex-end;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* The ⚠ symbol means errors are not shown by colour alone. */
+.field-error {
+  color: var(--color-open);
+  font-weight: 600;
+}
+
+.field-error::before {
+  content: '⚠ ';
+}
+
+.category-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--space-2);
+}
+
+.category-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-target);
+  padding: var(--space-2) var(--space-3);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  cursor: pointer;
+}
+
+.category-option input {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--color-primary);
+}
+
+/* Highlight the chosen category (the radio dot also shows it, not just colour). */
+.category-option:has(input:checked) {
+  border-color: var(--color-primary);
+  background-color: var(--color-resolved-bg);
+  font-weight: 600;
+}
+
+.category-option__emoji {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+/* ---------- Photo field and camera ---------- */
+/* A <label> styled as a button (it wraps the hidden file input). */
+.file-button {
+  display: inline-flex;
+  align-items: center;
+}
+
+.file-button:has(input:focus-visible) {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.file-button--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Hidden from view but still reachable by keyboard and screen readers. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.photo-preview {
+  display: block;
+  width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  border-radius: var(--radius);
+  background-color: #000000;
+}
+
+.camera {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.camera__viewport {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background-color: #000000;
+}
+
+.camera__video {
+  display: block;
+  width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+}
+
+.camera__status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+/* ---------- Location field ---------- */
+.location-box {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.location-box__accuracy {
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Report details ---------- */
+.report-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.report-detail__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.report-detail__icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.report-detail__title {
+  margin: 0 0 var(--space-1);
+  font-size: 1.25rem;
+}
+
+.detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+}
+
+.detail-list dt {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.detail-list dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-line; /* keep line breaks typed in the description */
+}
+
+/* ---------- Confirm dialog ---------- */
+.dialog {
+  width: min(90vw, 400px);
+  padding: var(--space-6);
+  border: none;
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+.dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.dialog__title {
+  margin: 0 0 var(--space-2);
+  font-size: 1.15rem;
+}
+
+.dialog .button-row {
+  justify-content: flex-end;
+  margin-top: var(--space-6);
+}
+
+/* ---------- Report list ---------- */
+.report-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each card is a <button>, so reset the default button look. */
+.report-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.report-card:active {
+  background-color: var(--color-bg);
+}
+
+.report-card__chevron {
+  margin-left: auto;
+  font-size: 1.5rem;
+  color: var(--color-text-muted);
+}
+
+.report-card__icon {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.report-card__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.report-card__title {
+  font-weight: 600;
+}
+
+.report-card__text {
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.report-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* Status is shown with text, not colour alone. */
+.badge {
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badge--open {
+  color: var(--color-open);
+  background-color: var(--color-open-bg);
+}
+
+.badge--resolved {
+  color: var(--color-resolved);
+  background-color: var(--color-resolved-bg);
+}
+
+/* ---------- Empty, placeholder and status messages ---------- */
+.empty-state,
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  border: 1px dashed var(--color-border);
+}
+
+.empty-state__title,
+.placeholder__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.status-text {
+  color: var(--color-text-muted);
+}
+
+.error-text {
+  color: var(--color-open);
+}

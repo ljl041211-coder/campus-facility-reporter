@@ -1,0 +1,29 @@
+{
+  "name": "campus-facility-reporter",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "A mobile PWA for reporting damaged outdoor campus facilities with a photo and GPS location.",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host"
+  },
+  "dependencies": {
+    "dexie": "^4.0.11",
+    "dexie-react-hooks": "^1.1.7 || ^4.0.0",
+    "leaflet": "^1.9.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-leaflet": "^5.0.0",
+    "react-webcam": "^7.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.0",
+    "vite": "^7.0.0",
+    "vite-plugin-pwa": "^1.0.1"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}
