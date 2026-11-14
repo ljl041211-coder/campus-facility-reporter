@@ -2,34 +2,7 @@ import Dexie from 'dexie'
 import { STATUS } from './constants/categories.js'
 import { resizeImage } from './utils/image.js'
 
-/**
- * On-device database (IndexedDB, wrapped by Dexie). All database access in the
- * app goes through the functions in this file.
- *
- * Design choice: reports AND their photos live in the same IndexedDB database,
- * in two tables linked by the report id. The Week 7 lab kept text in localStorage
- * and photos in IndexedDB; keeping both here means a report and its photo can be
- * created, updated or deleted together in one transaction, so a deleted report
- * never leaves an orphan photo behind.
- *
- * reports table – one row per facility report (small, loaded for the list)
- *   id           auto-increment primary key
- *   category     one of the ids in src/constants/categories.js
- *   description  free text written by the student
- *   locationNote optional landmark text, e.g. "Left of the library entrance"
- *   status       'open' | 'resolved'
- *   latitude, longitude, accuracy   from the Geolocation API (null if unknown)
- *   thumbnail    small copy of the photo for the list (null if no photo)
- *   createdAt, updatedAt            timestamps in milliseconds
- *
- * photos table – at most one full-size photo per report (large, loaded only
- * when a single report is opened)
- *   reportId     primary key, same value as reports.id
- *   image        JPEG data URL
- *
- * Only the fields listed in stores() are indexed; the photo itself is never
- * indexed because large values should not be used as index keys.
- */
+// Reports and photos share one database for atomic writes.
 export const db = new Dexie('campusReporterDB')
 
 db.version(1).stores({

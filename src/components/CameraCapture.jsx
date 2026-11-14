@@ -13,24 +13,13 @@ const VIDEO_CONSTRAINTS = {
 const PHOTO_MAX_SIZE = 1280
 const PHOTO_QUALITY = 0.85
 
-/**
- * Full-screen camera (Camera device API through react-webcam).
- *
- * Three states:
- *   live camera -> the user presses "Take photo"
- *   preview     -> the user checks the photo and chooses "Retake" or "Use this photo"
- *   error       -> the camera is denied or missing; the user can pick a photo file instead
- *
- * Nothing is saved here. The chosen photo is handed to the parent with onCapture().
- */
 export default function CameraCapture({ onCapture, onCancel }) {
-  // useRef keeps a reference to the Webcam component so its getScreenshot() can be called.
+
   const webcamRef = useRef(null)
   const [cameraReady, setCameraReady] = useState(false)
   const [cameraError, setCameraError] = useState(null)
   const [preview, setPreview] = useState(null)
 
-  // useCallback keeps the same function between renders (same pattern as the Week 7 lecture).
   const takePhoto = useCallback(() => {
     const image = webcamRef.current?.getScreenshot()
     if (image) setPreview(image)

@@ -1,7 +1,6 @@
 import ReportForm from '../components/ReportForm.jsx'
 import { createReport } from '../db.js'
 
-/** CREATE: an empty form. The position is requested automatically when the page opens. */
 export default function NewReportPage({ onSaved, onCancel }) {
   async function handleSubmit({ fields, photo }) {
     const id = await createReport(fields, photo)

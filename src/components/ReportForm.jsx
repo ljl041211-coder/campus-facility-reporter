@@ -6,14 +6,6 @@ import { useGeolocation } from '../hooks/useGeolocation.js'
 
 const DESCRIPTION_MAX_LENGTH = 500
 
-/**
- * The report form, shared by "New report" (Create) and "Edit report" (Update).
- *
- * initialReport / initialPhoto: existing values when editing; empty when creating.
- * autoLocate: ask for the device position as soon as the form opens.
- * onSubmit({ fields, photo, photoChanged }): called with valid data. The page
- * that uses the form decides whether that means createReport() or updateReport().
- */
 export default function ReportForm({
   initialReport = null,
   initialPhoto = null,
@@ -69,7 +61,7 @@ export default function ReportForm({
   }
 
   async function handleSubmit(event) {
-    event.preventDefault() // stop the browser from reloading the page
+    event.preventDefault()
 
     const problems = validate()
     setErrors(problems)

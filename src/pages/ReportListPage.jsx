@@ -10,11 +10,6 @@ const FILTERS = [
   { id: STATUS.RESOLVED, label: STATUS_LABELS[STATUS.RESOLVED] },
 ]
 
-/**
- * READ: lists every saved report, newest first.
- * useLiveQuery re-runs the query whenever the reports table changes, so the list
- * updates by itself after a report is created, edited or deleted.
- */
 export default function ReportListPage({ onOpenReport, onCreate }) {
   const reports = useLiveQuery(getAllReports)
   const [filter, setFilter] = useState('all')

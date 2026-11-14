@@ -1,8 +1,4 @@
-/**
- * Problem categories shown in the report form and the report list.
- * Each category will get its own cartoon map marker in a later step;
- * until then an emoji is used as the icon.
- */
+
 export const CATEGORIES = [
   { id: 'lighting', label: 'Broken street light', emoji: '💡' },
   { id: 'pavement', label: 'Damaged pavement', emoji: '🚧' },

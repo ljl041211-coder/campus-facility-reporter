@@ -2,7 +2,6 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import ReportForm from '../components/ReportForm.jsx'
 import { getPhoto, getReport, updateReport } from '../db.js'
 
-/** UPDATE: the same form as "New report", filled with the saved values. */
 export default function EditReportPage({ reportId, onSaved, onCancel }) {
   const report = useLiveQuery(() => getReport(reportId), [reportId])
   const photo = useLiveQuery(() => getPhoto(reportId), [reportId])

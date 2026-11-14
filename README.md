@@ -17,7 +17,8 @@ COMP10013 Dynamic Web Technologies – Coursework 01 (2026/27).
 | Geolocation API: position and accuracy recorded automatically | Done |
 | Handling of denied permissions, timeouts and missing camera | Done |
 | Installable PWA (manifest + service worker) | Configured, to be tested on a phone |
-| Campus map with report markers (Leaflet + OpenStreetMap) | Planned |
+| Campus map with a marker and popup for every report (Leaflet + OpenStreetMap) | Done |
+| Correct the position by dragging the marker, or tap the map when GPS is unavailable | Done |
 | Animated cartoon markers for open problems | Planned |
 | Extension: password-protected facilities staff mode | Planned – after the core is complete |
 
@@ -27,6 +28,8 @@ COMP10013 Dynamic Web Technologies – Coursework 01 (2026/27).
 - [Dexie](https://dexie.org/) and `dexie-react-hooks` – IndexedDB storage and live queries
 - [react-webcam](https://www.npmjs.com/package/react-webcam) – camera access
 - Geolocation API (built into the browser) – device position
+- [Leaflet](https://leafletjs.com/) and [React Leaflet](https://react-leaflet.js.org/) – interactive maps
+- [OpenStreetMap](https://www.openstreetmap.org/) – map tiles
 - [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) – web app manifest and service worker
 - [Vercel](https://vercel.com/) – HTTPS hosting (required for camera and geolocation on a phone)
 
@@ -42,7 +45,7 @@ COMP10013 Dynamic Web Technologies – Coursework 01 (2026/27).
 ### Install and run
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/ljl041211-coder/campus-facility-reporter.git
 cd campus-facility-reporter
 npm install
 npm run dev
@@ -54,7 +57,9 @@ To try the app without walking around, open Chrome DevTools → **More tools →
 
 ### Camera and location need HTTPS
 
-Browsers only allow the camera and geolocation on secure pages: `https://` addresses, or `localhost` on the development computer. A phone that opens the development server through the Wi-Fi address (for example `http://192.168.x.x:5173`) will not get camera or location access, so test those features on the Vercel deployment.
+Browsers only allow the camera and geolocation on secure pages: `https://` addresses, or `localhost` on the development computer.
+
+`http://localhost:5173` only works on the computer that runs the development server. On a phone, `localhost` means the phone itself, so the page does not load there. To look at the layout on a phone that is on the same Wi-Fi, start the server with `npm run dev -- --host` and open the **Network** address it prints (for example `http://192.168.x.x:5173`). That address is plain HTTP, so the page is shown but the camera and location are blocked. Test those features on the Vercel deployment, which uses HTTPS.
 
 ### Build and preview the production version
 
@@ -80,12 +85,13 @@ npm run lint
 
 ## How to use
 
-1. **Create a report.** Open **New report**. The app looks up your position straight away. Tap **Take photo**, photograph the problem, then **Use this photo**. Choose the type of problem, describe it, optionally add a location note such as "Left of the library entrance", and tap **Save report**.
-2. **View reports.** **My reports** lists all reports, newest first. Use **All / Needs repair / Resolved** to filter. Tap a report to see the photo, the position (with a link to OpenStreetMap) and the dates.
-3. **Update a report.** On the details screen, tap **Mark as resolved** when the problem has been fixed (or **Reopen report**), or **Edit report** to change the text, the category, the photo or the position.
-4. **Delete a report.** On the details screen, tap **Delete report** and confirm. The photo is deleted with it.
+1. **Create a report.** Open **New report**. The app looks up your position straight away and shows it on a small map. If the marker is not in exactly the right place, drag it there. Tap **Take photo**, photograph the problem, then **Use this photo**. Choose the type of problem, describe it, optionally add a location note such as "Left of the library entrance", and tap **Save report**.
+2. **View reports in a list.** **My reports** lists all reports, newest first. Use **All / Needs repair / Resolved** to filter. Tap a report to see the photo, the position and the dates.
+3. **View reports on the map.** **Map** shows every report that has a position. Problems that still need repair have a red marker; resolved ones have a grey marker with a tick. Tap a marker for a summary, then **View report**. From a report, **Show on map** opens the map centred on it.
+4. **Update a report.** On the details screen, tap **Mark as resolved** when the problem has been fixed (or **Reopen report**), or **Edit report** to change the text, the category, the photo or the position.
+5. **Delete a report.** On the details screen, tap **Delete report** and confirm. The photo and the map marker are removed with it.
 
-If location permission is denied, the report can still be saved with a location note. If the camera is denied or missing, a photo can be chosen from the device instead.
+If location permission is denied, tap the small map in the form to place the marker by hand, or save the report with only a location note. If the camera is denied or missing, a photo can be chosen from the device instead.
 
 ## Project structure
 
@@ -98,19 +104,24 @@ src/
   index.css, App.css           design tokens and component styles
   db.js                        Dexie database and all CRUD functions
   constants/categories.js      problem categories and status values
+  constants/map.js             map centre, zoom levels and tile source
   hooks/useGeolocation.js      custom hook around the Geolocation API
+  hooks/useOnlineStatus.js     custom hook: is the device online?
   utils/image.js               read and resize photos
   utils/format.js              date, coordinate and map-link formatting
+  utils/mapIcons.js            map markers built with Leaflet divIcon
   components/
     BottomNav.jsx              bottom tab bar
     ReportForm.jsx             form shared by New report and Edit report
     CameraCapture.jsx          camera dialog (react-webcam) with file fallback
-    LocationField.jsx          shows the geolocation state and a retry button
+    LocationField.jsx          shows the geolocation state, a retry button and the small map
+    PositionMap.jsx            small map in the form: drag or tap to correct the position
     ReportCard.jsx             one report in the list
     StatusBadge.jsx            "Needs repair" / "Resolved" label
     Modal.jsx, ConfirmDialog.jsx   dialogs built on the native <dialog> element
   pages/
     ReportListPage.jsx         Read: list and filter
+    MapPage.jsx                Read: all reports as markers on the campus map
     NewReportPage.jsx          Create
     ReportDetailPage.jsx       Read one report; mark resolved; delete
     EditReportPage.jsx         Update
@@ -126,15 +137,19 @@ Reports and photos are stored in one IndexedDB database (`campusReporterDB`) in 
 | `reports` | `id` (auto-increment) | category, description, locationNote, status, latitude, longitude, accuracy, thumbnail, createdAt, updatedAt |
 | `photos` | `reportId` | the full-size photo as a JPEG data URL |
 
+`accuracy` is the GPS accuracy in metres. It is `null` when the user placed or moved the marker by hand, because that position did not come from the GPS.
+
 A report and its photo are created, updated and deleted inside one Dexie transaction, so a deleted report never leaves an orphan photo behind. The list only loads the small `reports` rows (with a 160 px thumbnail); the full-size photo is loaded when a single report is opened. See the comments in `src/db.js`.
 
 ## Known limitations
 
 - Reports are stored only on the device that created them. Nothing is sent to a server, so facilities staff cannot see them yet.
 - Screens are switched with React state rather than a router, so the phone's system Back button leaves the app instead of going to the previous screen. Use the back arrow in the header.
-- GPS can be off by ten metres or more between buildings; the location note is there to compensate.
+- GPS can be off by ten metres or more between buildings. Dragging the marker and the location note are there to compensate.
+- The map background (tiles) is downloaded from OpenStreetMap and needs a network connection. Offline, the markers and the report list still work, but the map background stays grey.
+- The position marker can only be dragged with a finger or a mouse, not with the keyboard.
 - Clearing the browser's site data deletes all reports.
 
 ## References and acknowledgements
 
-Third-party libraries are listed under Tech stack and will be referenced in CTR Harvard style in the coursework report. The OpenStreetMap link on the details screen opens map data © OpenStreetMap contributors.
+Third-party libraries are listed under Tech stack. Maps are drawn with Leaflet. Map data © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors; the tiles are loaded from the OpenStreetMap tile server under its [tile usage policy](https://operations.osmfoundation.org/policies/tiles/).

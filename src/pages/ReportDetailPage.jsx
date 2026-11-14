@@ -4,13 +4,14 @@ import ConfirmDialog from '../components/ConfirmDialog.jsx'
 import StatusBadge from '../components/StatusBadge.jsx'
 import { getCategory, STATUS } from '../constants/categories.js'
 import { deleteReport, getPhoto, getReport, setReportStatus } from '../db.js'
-import { formatCoordinates, formatDateTime, openStreetMapUrl } from '../utils/format.js'
+import {
+  formatAccuracy,
+  formatCoordinates,
+  formatDateTime,
+  openStreetMapUrl,
+} from '../utils/format.js'
 
-/**
- * READ one report in full, with the actions that change it:
- * UPDATE (mark as resolved / reopen, or open the edit form) and DELETE.
- */
-export default function ReportDetailPage({ reportId, onEdit, onDeleted }) {
+export default function ReportDetailPage({ reportId, onEdit, onDeleted, onShowOnMap }) {
   const report = useLiveQuery(() => getReport(reportId), [reportId])
   const photo = useLiveQuery(() => getPhoto(reportId), [reportId])
   const [confirmingDelete, setConfirmingDelete] = useState(false)
@@ -60,7 +61,8 @@ export default function ReportDetailPage({ reportId, onEdit, onDeleted }) {
         <dd>
           {hasPosition ? (
             <>
-              {formatCoordinates(report.latitude, report.longitude)} (about ±{report.accuracy} m)
+              {formatCoordinates(report.latitude, report.longitude)} (
+              {formatAccuracy(report.accuracy)})
               <br />
               <a
                 href={openStreetMapUrl(report.latitude, report.longitude)}
@@ -69,6 +71,13 @@ export default function ReportDetailPage({ reportId, onEdit, onDeleted }) {
               >
                 Open in OpenStreetMap
               </a>
+              <button
+                type="button"
+                className="button button--secondary detail-list__button"
+                onClick={() => onShowOnMap(reportId)}
+              >
+                Show on map
+              </button>
             </>
           ) : (
             'No position recorded'

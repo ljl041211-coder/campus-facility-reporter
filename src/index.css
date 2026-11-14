@@ -104,7 +104,6 @@ a {
   white-space: nowrap;
 }
 
-/* Respect the system "reduce motion" setting (the animated map markers will use this too). */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

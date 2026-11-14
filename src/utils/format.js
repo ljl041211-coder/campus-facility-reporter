@@ -17,3 +17,8 @@ export function formatCoordinates(latitude, longitude) {
 export function openStreetMapUrl(latitude, longitude) {
   return `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=19/${latitude}/${longitude}`
 }
+
+/** Describes how precise a position is. Positions placed by hand have no accuracy value. */
+export function formatAccuracy(accuracy) {
+  return accuracy == null ? 'set by hand on the map' : `accurate to about ${accuracy} m`
+}

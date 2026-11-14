@@ -6,10 +6,6 @@ const GEOLOCATION_OPTIONS = {
   maximumAge: 0, // always take a fresh reading, never a cached one
 }
 
-/**
- * The Geolocation API uses callbacks. Wrapping it in a Promise lets the rest of
- * the code handle success and failure in one place.
- */
 function getCurrentPosition() {
   return new Promise((resolve, reject) => {
     if (!('geolocation' in navigator)) {
@@ -35,17 +31,6 @@ function describeError(error) {
   }
 }
 
-/**
- * Custom hook for reading the device position.
- *
- *   position  { latitude, longitude, accuracy } or null
- *   status    'idle' | 'locating' | 'error'
- *   error     message for the user, or null
- *   locate()  asks the device for the current position
- *
- * initialPosition: a position that is already known (when editing a report).
- * autoStart: ask for the position as soon as the component appears.
- */
 export function useGeolocation({ initialPosition = null, autoStart = false } = {}) {
   const [position, setPosition] = useState(initialPosition)
   const [status, setStatus] = useState(autoStart ? 'locating' : 'idle')
@@ -83,6 +68,15 @@ export function useGeolocation({ initialPosition = null, autoStart = false } = {
     request()
   }, [request])
 
+  // Used when the user corrects the position on the map. A position set by hand
+  // has no GPS accuracy, so accuracy is stored as null.
+  const setManualPosition = useCallback((latitude, longitude) => {
+    latestRequest.current += 1 // a GPS answer that is still on its way must not overwrite it
+    setPosition({ latitude, longitude, accuracy: null })
+    setError(null)
+    setStatus('idle')
+  }, [])
+
   useEffect(() => {
     if (autoStart) request()
     // Cleanup: invalidate any request that is still running when the component goes away.
@@ -91,5 +85,5 @@ export function useGeolocation({ initialPosition = null, autoStart = false } = {
     }
   }, [autoStart, request])
 
-  return { position, status, error, locate }
+  return { position, status, error, locate, setManualPosition }
 }

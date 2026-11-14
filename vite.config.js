@@ -2,10 +2,6 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// vite-plugin-pwa generates the web app manifest and the service worker when the
-// app is built. The service worker is NOT active in `npm run dev`, so test
-// installation and offline start with `npm run build && npm run preview`, or on
-// the Vercel deployment.
 export default defineConfig({
   plugins: [
     react(),
