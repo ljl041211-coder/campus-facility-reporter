@@ -1,0 +1,25 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+dev-dist
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local env and tooling
+.env
+.env.*
+*.local
+.vercel
+
+# Personal study notes (Chinese), not part of the submission
+notes/
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store

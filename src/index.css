@@ -1,0 +1,116 @@
+/* Design tokens – change colours and spacing here, not in components. */
+:root {
+  --color-primary: #1f6f5c;
+  --color-primary-dark: #154d40;
+  --color-primary-soft: #e3f0ec;
+  --color-bg: #f6f7f4;
+  --color-surface: #ffffff;
+  --color-text: #1c2321;
+  --color-text-muted: #55605c;
+  --color-border: #d9ddd8;
+  --color-open: #b3261e;
+  --color-open-bg: #fbe9e7;
+  --color-resolved: #1e6b3a;
+  --color-resolved-bg: #e5f3e8;
+  --color-focus: #f2a900;
+
+  --radius: 12px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+
+  --header-height: 56px;
+  --nav-height: 64px;
+  --touch-target: 48px;
+
+  color-scheme: light;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background-color: var(--color-bg);
+}
+
+h1,
+h2,
+p,
+ul,
+dl,
+dd,
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+fieldset {
+  border: 0;
+  min-width: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* 16px text in form controls stops iOS Safari from zooming in when they get focus. */
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--color-primary-dark);
+}
+
+/* Visible keyboard focus for accessibility. */
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Hidden on screen but still available to screen readers and the keyboard. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Respect the system "reduce motion" setting (the animated map markers will use this too). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
